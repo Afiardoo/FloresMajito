@@ -182,7 +182,10 @@
 
             <div class="audio-container">
                 <button id="audioButton" class="audio-button">🎵 Flores Amarillas 🎵</button>
-                <iframe id="audioFrame" width="0" height="0" src="https://www.youtube.com/embed/S7gMzYqXIZc?enablejsapi=1&autoplay=0&loop=1&playlist=S7gMzYqXIZc" frameborder="0" allow="autoplay; encrypted-media" style="display: none;"></iframe>
+                <audio id="audio" loop>
+                    <source src="Floricienta  Flores Amarillas [Letra].mp3" type="audio/mpeg">
+                    Tu navegador no soporta el elemento audio.
+                </audio>
             </div>
 
             <p class="date" id="currentDate"></p>
@@ -370,73 +373,51 @@
             }
         });
 
-        // YouTube API functionality
-        let player;
-        let isPlaying = false;
+        // Audio functionality
+        const audio = document.getElementById('audio');
         const audioButton = document.getElementById('audioButton');
-
-        // Load YouTube API
-        function loadYouTubeAPI() {
-            const tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-        }
-
-        // YouTube API ready callback
-        window.onYouTubeIframeAPIReady = function() {
-            player = new YT.Player('audioFrame', {
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        };
-
-        function onPlayerReady(event) {
-            // Player is ready
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                isPlaying = true;
-                audioButton.textContent = '⏸️ Pausar Música ⏸️';
-                audioButton.classList.add('playing');
-                startMusicParticles();
-            } else {
-                isPlaying = false;
-                audioButton.textContent = '🎵 Flores Amarillas 🎵';
-                audioButton.classList.remove('playing');
-            }
-        }
+        let isPlaying = false;
+        let musicParticleInterval;
 
         audioButton.addEventListener('click', () => {
-            if (player) {
-                if (isPlaying) {
-                    player.pauseVideo();
-                } else {
-                    player.playVideo();
+            if (isPlaying) {
+                audio.pause();
+                audioButton.textContent = '🎵 Flores Amarillas 🎵';
+                audioButton.classList.remove('playing');
+                isPlaying = false;
+                if (musicParticleInterval) {
+                    clearInterval(musicParticleInterval);
                 }
+            } else {
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                audioButton.textContent = '⏸️ Pausar Música ⏸️';
+                audioButton.classList.add('playing');
+                isPlaying = true;
+                startMusicParticles();
             }
         });
 
         function startMusicParticles() {
-            const musicInterval = setInterval(() => {
-                if (isPlaying) {
+            musicParticleInterval = setInterval(() => {
+                if (isPlaying && !audio.paused) {
                     for (let i = 0; i < 3; i++) {
                         particles.push(new Particle(
                             Math.random() * canvas.width,
                             Math.random() * canvas.height
                         ));
                     }
-                } else {
-                    clearInterval(musicInterval);
                 }
             }, 500);
         }
 
-        // Load YouTube API when page loads
-        loadYouTubeAPI();
+        audio.addEventListener('ended', () => {
+            isPlaying = false;
+            audioButton.textContent = '🎵 Flores Amarillas 🎵';
+            audioButton.classList.remove('playing');
+            if (musicParticleInterval) {
+                clearInterval(musicParticleInterval);
+            }
+        });
 
         // Set current date in Spanish
         const months = [
