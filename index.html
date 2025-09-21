@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flores Para Ti Majito 🌻</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+            to { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.5); }
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            color: #ffd700;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+
+        .content {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+            max-width: 600px;
+        }
+
+        .message {
+            color: #ffffff;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .heart {
+            color: #ff6b6b;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+            0%, 50%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.1); }
+        }
+
+        .audio-container {
+            margin: 30px 0;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1.5s forwards;
+        }
+
+        .audio-button {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            color: #1a1a2e;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .audio-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.6);
+        }
+
+        .audio-button.playing {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .date {
+            color: #ffd700;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 3;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .content {
+                margin: 10px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <h1 class="title">Flores Para Ti Majito 🌻</h1>
+        <p class="subtitle">Para mi flaquita hermosa</p>
+
+        <div class="content">
+            <p class="message">Para mi flaquita hermosa <span class="heart">❤️</span></p>
+            <p class="message">¡Feliz inicio de primavera!</p>
+            <p class="message">Hace poquito cumplimos 3 años y 8 meses y sigo feliz de seguir a tu lado</p>
+            <p class="message">Que este nuevo ciclo esté lleno de alegría, amor y momentos hermosos juntos</p>
+            <p class="message">Con todo mi amor <span style="color: #ffd700;">💛</span></p>
+
+            <div class="audio-container">
+                <button id="audioButton" class="audio-button">🎵 Flores Amarillas 🎵</button>
+                <iframe id="audioFrame" width="0" height="0" src="https://www.youtube.com/embed/S7gMzYqXIZc?enablejsapi=1&autoplay=0&loop=1&playlist=S7gMzYqXIZc" frameborder="0" allow="autoplay; encrypted-media" style="display: none;"></iframe>
+            </div>
+
+            <p class="date" id="currentDate"></p>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Sunflower class
+        class Sunflower {
+            constructor(x, y, delay = 0) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 40 + 60;
+                this.rotation = 0;
+                this.floatOffset = Math.random() * Math.PI * 2;
+                this.delay = delay;
+                this.opacity = 0;
+                this.startTime = Date.now();
+            }
+
+            update() {
+                const elapsed = (Date.now() - this.startTime) / 1000;
+
+                if (elapsed > this.delay) {
+                    this.opacity = Math.min(1, (elapsed - this.delay) * 2);
+                    this.rotation += 0.005;
+                    this.floatOffset += 0.02;
+                }
+            }
+
+            draw() {
+                if (this.opacity <= 0) return;
+
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+
+                const floatY = this.y + Math.sin(this.floatOffset) * 10;
+                const floatX = this.x + Math.cos(this.floatOffset * 0.7) * 5;
+
+                ctx.translate(floatX, floatY);
+                ctx.rotate(this.rotation);
+
+                // Draw petals
+                const petalCount = 12;
+                for (let i = 0; i < petalCount; i++) {
+                    ctx.save();
+                    ctx.rotate((i * Math.PI * 2) / petalCount);
+
+                    // Petal gradient
+                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.8);
+                    gradient.addColorStop(0, '#ffed4e');
+                    gradient.addColorStop(0.7, '#ffd700');
+                    gradient.addColorStop(1, '#ffb300');
+
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.ellipse(0, -this.size * 0.6, this.size * 0.15, this.size * 0.4, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+
+                // Draw center
+                const centerGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, this.size * 0.3);
+                centerGradient.addColorStop(0, '#8B4513');
+                centerGradient.addColorStop(0.6, '#654321');
+                centerGradient.addColorStop(1, '#4A2C17');
+
+                ctx.fillStyle = centerGradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size * 0.25, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw seeds pattern
+                ctx.fillStyle = '#2F1B14';
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i * Math.PI * 2) / 8;
+                    const seedX = Math.cos(angle) * this.size * 0.1;
+                    const seedY = Math.sin(angle) * this.size * 0.1;
+                    ctx.beginPath();
+                    ctx.arc(seedX, seedY, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        // Particle class
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4 - 2;
+                this.life = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+                this.size = Math.random() * 4 + 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.1; // gravity
+                this.life -= this.decay;
+            }
+
+            draw() {
+                if (this.life <= 0) return;
+
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = '#ffd700';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Create sunflowers
+        const sunflowers = [];
+        for (let i = 0; i < 7; i++) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const delay = i * 0.5;
+            sunflowers.push(new Sunflower(x, y, delay));
+        }
+
+        // Particles array
+        const particles = [];
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw sunflowers
+            sunflowers.forEach(sunflower => {
+                sunflower.update();
+                sunflower.draw();
+            });
+
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.update();
+                particle.draw();
+
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // Add random particles
+            if (Math.random() < 0.1) {
+                particles.push(new Particle(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Click effect
+        document.addEventListener('click', (e) => {
+            for (let i = 0; i < 10; i++) {
+                particles.push(new Particle(e.clientX, e.clientY));
+            }
+        });
+
+        // YouTube API functionality
+        let player;
+        let isPlaying = false;
+        const audioButton = document.getElementById('audioButton');
+
+        // Load YouTube API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
+
+        // YouTube API ready callback
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player('audioFrame', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        };
+
+        function onPlayerReady(event) {
+            // Player is ready
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                isPlaying = true;
+                audioButton.textContent = '⏸️ Pausar Música ⏸️';
+                audioButton.classList.add('playing');
+                startMusicParticles();
+            } else {
+                isPlaying = false;
+                audioButton.textContent = '🎵 Flores Amarillas 🎵';
+                audioButton.classList.remove('playing');
+            }
+        }
+
+        audioButton.addEventListener('click', () => {
+            if (player) {
+                if (isPlaying) {
+                    player.pauseVideo();
+                } else {
+                    player.playVideo();
+                }
+            }
+        });
+
+        function startMusicParticles() {
+            const musicInterval = setInterval(() => {
+                if (isPlaying) {
+                    for (let i = 0; i < 3; i++) {
+                        particles.push(new Particle(
+                            Math.random() * canvas.width,
+                            Math.random() * canvas.height
+                        ));
+                    }
+                } else {
+                    clearInterval(musicInterval);
+                }
+            }, 500);
+        }
+
+        // Load YouTube API when page loads
+        loadYouTubeAPI();
+
+        // Set current date in Spanish
+        const months = [
+            'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+        ];
+
+        const now = new Date();
+        const day = now.getDate();
+        const month = months[now.getMonth()];
+        const year = now.getFullYear();
+
+        document.getElementById('currentDate').textContent = `${day} de ${month} de ${year}`;
+
+        // Responsive sunflowers
+        function repositionSunflowers() {
+            sunflowers.forEach(sunflower => {
+                sunflower.x = Math.random() * canvas.width;
+                sunflower.y = Math.random() * canvas.height;
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            setTimeout(repositionSunflowers, 100);
+        });
+    </script>
+</body>
+</html>
